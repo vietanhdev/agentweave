@@ -40,6 +40,8 @@ agentweave install_env
 agentweave run
 ```
 
+![Screenshot of Example project](https://raw.githubusercontent.com/vietanhdev/agentweave/refs/heads/main/screenshots/example-project.png)
+
 ## Environment Setup 🔐
 
 After initializing your project, make sure to:

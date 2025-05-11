@@ -34,9 +34,7 @@ app.command(name="run")(run.app)  # Register run as a direct command
 app.add_typer(deploy.app, name="deploy")
 app.add_typer(template.app, name="template")
 app.add_typer(convert_to_template.app, name="convert-to-template")
-app.command(name="install_env")(
-    install_env.app
-)  # Register install_env as a direct command
+app.command(name="install_env")(install_env.app)  # Register install_env as a direct command
 app.command(name="dev")(dev.app)  # Register dev as a direct command
 
 console = Console()

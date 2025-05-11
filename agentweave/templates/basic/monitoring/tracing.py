@@ -5,8 +5,9 @@ Tracing module for monitoring agent activities.
 import json
 import logging
 import time
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable, Dict, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ class Tracer:
 
     def __init__(
         self,
-        log_dir: Optional[str] = None,
+        log_dir: str | None = None,
         console_logging: bool = True,
         file_logging: bool = True,
     ):
@@ -53,9 +54,7 @@ class Tracer:
         if self.file_logging:
             self.trace_file = self.log_dir / f"trace_{int(time.time())}.jsonl"
 
-    def start_trace(
-        self, trace_type: str, conversation_id: Optional[str] = None
-    ) -> Dict[str, Any]:
+    def start_trace(self, trace_type: str, conversation_id: str | None = None) -> dict[str, Any]:
         """
         Start a new trace.
 
@@ -80,9 +79,7 @@ class Tracer:
         self.traces.append(trace)
         return trace
 
-    def update_trace(
-        self, trace: Dict[str, Any], data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    def update_trace(self, trace: dict[str, Any], data: dict[str, Any]) -> dict[str, Any]:
         """
         Update an existing trace with new data.
 
@@ -98,10 +95,10 @@ class Tracer:
 
     def end_trace(
         self,
-        trace: Dict[str, Any],
+        trace: dict[str, Any],
         status: str = "success",
-        data: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+        data: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """
         End a trace.
 
@@ -123,7 +120,7 @@ class Tracer:
         self._log_trace(trace)
         return trace
 
-    def _log_trace(self, trace: Dict[str, Any]) -> None:
+    def _log_trace(self, trace: dict[str, Any]) -> None:
         """
         Log a trace to the configured outputs.
 

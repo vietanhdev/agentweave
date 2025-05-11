@@ -4,7 +4,7 @@ Vector store tool for retrieval augmentation.
 
 import logging
 import os
-from typing import Any, Dict, Optional, Type
+from typing import Any
 
 from langchain_core.tools import BaseTool
 from pydantic import BaseModel, Field
@@ -14,8 +14,8 @@ from .registry import register_tool
 logger = logging.getLogger(__name__)
 
 try:
-    from langchain_openai import OpenAIEmbeddings
     from langchain_chroma import Chroma
+    from langchain_openai import OpenAIEmbeddings
     from langchain_text_splitters import RecursiveCharacterTextSplitter
 
     VECTOR_STORE_AVAILABLE = True
@@ -44,7 +44,7 @@ class VectorStoreAddInput(BaseModel):
     text: str = Field(
         description="The text to add to the vector store.",
     )
-    metadata: Optional[Dict[str, Any]] = Field(
+    metadata: dict[str, Any] | None = Field(
         default=None,
         description="Optional metadata to associate with the text.",
     )
@@ -56,16 +56,16 @@ class VectorStoreQueryTool(BaseTool):
 
     name: str = "vector_store_query"
     description: str = "Query a vector store for documents similar to the input query. Use this when you need to retrieve information from a knowledge base."
-    args_schema: Type[BaseModel] = VectorStoreQueryInput
-    persist_directory: Optional[str] = None
-    embedding_model: Optional[Any] = None
-    _error_message: Optional[str] = None
-    vector_store: Optional[Any] = None
+    args_schema: type[BaseModel] = VectorStoreQueryInput
+    persist_directory: str | None = None
+    embedding_model: Any | None = None
+    _error_message: str | None = None
+    vector_store: Any | None = None
 
     def __init__(
         self,
-        persist_directory: Optional[str] = None,
-        embedding_model: Optional[Any] = None,
+        persist_directory: str | None = None,
+        embedding_model: Any | None = None,
     ):
         """Initialize the vector store query tool."""
         super().__init__()
@@ -135,7 +135,7 @@ class VectorStoreQueryTool(BaseTool):
             # Return a readable format
             response = "Found the following relevant information:\n\n"
             for i, result in enumerate(formatted_results):
-                response += f"{i+1}. {result['document']}\n"
+                response += f"{i + 1}. {result['document']}\n"
                 if i < len(formatted_results) - 1:
                     response += "\n---\n\n"
 
@@ -153,17 +153,17 @@ class VectorStoreAddTool(BaseTool):
 
     name: str = "vector_store_add"
     description: str = "Add text to the vector store knowledge base. Use this when you need to store information for later retrieval."
-    args_schema: Type[BaseModel] = VectorStoreAddInput
-    persist_directory: Optional[str] = None
-    embedding_model: Optional[Any] = None
-    _error_message: Optional[str] = None
-    vector_store: Optional[Any] = None
-    text_splitter: Optional[Any] = None
+    args_schema: type[BaseModel] = VectorStoreAddInput
+    persist_directory: str | None = None
+    embedding_model: Any | None = None
+    _error_message: str | None = None
+    vector_store: Any | None = None
+    text_splitter: Any | None = None
 
     def __init__(
         self,
-        persist_directory: Optional[str] = None,
-        embedding_model: Optional[Any] = None,
+        persist_directory: str | None = None,
+        embedding_model: Any | None = None,
     ):
         """Initialize the vector store add tool."""
         super().__init__()
@@ -211,7 +211,7 @@ class VectorStoreAddTool(BaseTool):
             self._error_message = f"Error initializing vector store: {str(e)}"
             logger.error(self._error_message)
 
-    def _run(self, text: str, metadata: Optional[Dict[str, Any]] = None) -> str:
+    def _run(self, text: str, metadata: dict[str, Any] | None = None) -> str:
         """Add text to the vector store."""
         if getattr(self, "_error_message", None):
             return f"Error: {self._error_message}"
@@ -223,10 +223,7 @@ class VectorStoreAddTool(BaseTool):
             # Prepare documents with metadata
             from langchain_core.documents import Document
 
-            documents = [
-                Document(page_content=chunk, metadata=metadata or {})
-                for chunk in chunks
-            ]
+            documents = [Document(page_content=chunk, metadata=metadata or {}) for chunk in chunks]
 
             # Add documents to vector store
             self.vector_store.add_documents(documents)
@@ -254,9 +251,7 @@ if __name__ == "__main__":
     including tools, memory, monitoring, and deployment options.
     """
 
-    result = add_tool.invoke(
-        {"text": sample_text, "metadata": {"source": "documentation"}}
-    )
+    result = add_tool.invoke({"text": sample_text, "metadata": {"source": "documentation"}})
     print(result)
 
     # Query the vector store

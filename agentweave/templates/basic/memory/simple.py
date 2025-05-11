@@ -4,7 +4,7 @@ Simple in-memory storage implementation.
 
 import logging
 import time
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ class SimpleMemory:
 
         self._memory[namespace][key] = {"value": value, "timestamp": time.time()}
 
-    def get(self, key: str, namespace: str = "default") -> Optional[Any]:
+    def get(self, key: str, namespace: str = "default") -> Any | None:
         """
         Retrieve an item from memory.
 
@@ -51,7 +51,7 @@ class SimpleMemory:
         item = self._memory[namespace].get(key)
         return item["value"] if item else None
 
-    def add_message(self, conversation_id: str, message: Dict[str, Any]) -> None:
+    def add_message(self, conversation_id: str, message: dict[str, Any]) -> None:
         """
         Add a message to a conversation.
 
@@ -69,9 +69,7 @@ class SimpleMemory:
         self._conversations[conversation_id]["messages"].append(message)
         self._conversations[conversation_id]["updated_at"] = time.time()
 
-    def get_messages(
-        self, conversation_id: str, limit: Optional[int] = None
-    ) -> List[Dict[str, Any]]:
+    def get_messages(self, conversation_id: str, limit: int | None = None) -> list[dict[str, Any]]:
         """
         Get messages from a conversation.
 
@@ -90,7 +88,7 @@ class SimpleMemory:
             return messages[-limit:]
         return messages
 
-    def list_conversations(self) -> List[Tuple[str, float, float]]:
+    def list_conversations(self) -> list[tuple[str, float, float]]:
         """
         List all conversations.
 

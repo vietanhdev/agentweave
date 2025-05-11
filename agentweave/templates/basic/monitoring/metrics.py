@@ -5,8 +5,9 @@ Metrics module for collecting performance metrics of agent activities.
 import json
 import logging
 import time
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable, Dict, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +17,7 @@ class MetricsCollector:
     Metrics collector for tracking agent performance.
     """
 
-    def __init__(self, metrics_dir: Optional[str] = None, flush_interval: int = 60):
+    def __init__(self, metrics_dir: str | None = None, flush_interval: int = 60):
         """
         Initialize the metrics collector.
 
@@ -48,7 +49,7 @@ class MetricsCollector:
         success: bool,
         response_time: float,
         query: str,
-        conversation_id: Optional[str] = None,
+        conversation_id: str | None = None,
     ) -> None:
         """
         Record metrics for an agent request.
@@ -72,9 +73,7 @@ class MetricsCollector:
         if time.time() - self.last_flush_time > self.flush_interval:
             self.flush_metrics()
 
-    def record_tool_usage(
-        self, tool_name: str, success: bool, execution_time: float
-    ) -> None:
+    def record_tool_usage(self, tool_name: str, success: bool, execution_time: float) -> None:
         """
         Record metrics for a tool usage.
 
@@ -105,7 +104,7 @@ class MetricsCollector:
         self,
         error_type: str,
         error_message: str,
-        context: Optional[Dict[str, Any]] = None,
+        context: dict[str, Any] | None = None,
     ) -> None:
         """
         Record an error.
@@ -134,7 +133,7 @@ class MetricsCollector:
                 }
             )
 
-    def get_summary(self) -> Dict[str, Any]:
+    def get_summary(self) -> dict[str, Any]:
         """
         Get a summary of the metrics.
 
@@ -187,9 +186,7 @@ class MetricsCollector:
                 "min": min_response_time,
             },
             "tool_usage": tool_usage_summary,
-            "error_count": sum(
-                error["count"] for error in self.metrics["errors"].values()
-            ),
+            "error_count": sum(error["count"] for error in self.metrics["errors"].values()),
             "most_common_errors": sorted(
                 [
                     {"type": err_type, "count": err_data["count"]}

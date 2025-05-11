@@ -4,7 +4,6 @@ Template management commands for the AgentWeave CLI.
 
 import os
 from pathlib import Path
-from typing import List, Optional
 
 import typer
 from rich.console import Console
@@ -25,7 +24,7 @@ def create_template(
         ..., help="Path to the project directory to create a template from"
     ),
     template_name: str = typer.Argument(..., help="Name for the new template"),
-    exclude: Optional[List[str]] = typer.Option(
+    exclude: list[str] | None = typer.Option(
         None, "--exclude", "-e", help="Patterns to exclude from the template"
     ),
 ):
@@ -40,9 +39,7 @@ def create_template(
         try:
             project_path = Path(project_dir).resolve()
             if not project_path.exists():
-                console.print(
-                    f"[red]Error: Project directory {project_dir} not found[/red]"
-                )
+                console.print(f"[red]Error: Project directory {project_dir} not found[/red]")
                 raise typer.Exit(1)
 
             create_template_from_project(
@@ -51,9 +48,7 @@ def create_template(
                 exclude_paths=exclude,
             )
 
-            progress.update(
-                task, completed=1, description="Template created successfully!"
-            )
+            progress.update(task, completed=1, description="Template created successfully!")
 
             console.print(
                 f"\n[bold green]✓ Template '{template_name}' created successfully![/bold green]"
@@ -63,9 +58,7 @@ def create_template(
             console.print(
                 "  2. Replace project-specific values with placeholders like {{project_name}}"
             )
-            console.print(
-                "  3. Update schema.yaml with appropriate configuration options"
-            )
+            console.print("  3. Update schema.yaml with appropriate configuration options")
 
         except Exception as e:
             console.print(f"[red]Error creating template: {str(e)}[/red]")
@@ -89,9 +82,7 @@ def list_templates():
 
 @app.command("info")
 def template_info(
-    template_name: str = typer.Argument(
-        ..., help="Name of the template to show info for"
-    ),
+    template_name: str = typer.Argument(..., help="Name of the template to show info for"),
 ):
     """Show information about a template."""
     templates_dir = get_templates_dir()
@@ -109,7 +100,7 @@ def template_info(
     if schema_path.exists():
         import yaml
 
-        with open(schema_path, "r") as f:
+        with open(schema_path) as f:
             schema = yaml.safe_load(f)
 
         if "description" in schema:
@@ -143,7 +134,7 @@ def template_info(
 
     # List files in the template
     console.print("\n[bold]Template structure:[/bold]")
-    for root, dirs, files in os.walk(template_dir):
+    for root, _dirs, files in os.walk(template_dir):
         level = root.replace(str(template_dir), "").count(os.sep)
         indent = "  " * level
         rel_path = os.path.relpath(root, template_dir)

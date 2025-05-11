@@ -3,7 +3,7 @@ Router for agent-related endpoints.
 """
 
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 from agents.agent import create_agent, get_agent_config
 from fastapi import APIRouter, HTTPException
@@ -20,8 +20,8 @@ class AgentConfig(BaseModel):
     llm_provider: str
     model: str
     temperature: float
-    max_tokens: Optional[int] = None
-    other_params: Optional[Dict[str, Any]] = None
+    max_tokens: int | None = None
+    other_params: dict[str, Any] | None = None
 
 
 @router.get("/config")

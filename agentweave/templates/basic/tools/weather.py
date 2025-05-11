@@ -4,7 +4,6 @@ Weather tool for getting current weather information.
 
 import logging
 import os
-from typing import Optional, Type
 
 import httpx
 from langchain_core.tools import BaseTool
@@ -29,10 +28,10 @@ class WeatherTool(BaseTool):
 
     name: str = "weather"
     description: str = "A tool to get current weather information for a specified location. Input should be a city name or location."
-    args_schema: Type[BaseModel] = WeatherInput
-    api_key: Optional[str] = None
+    args_schema: type[BaseModel] = WeatherInput
+    api_key: str | None = None
 
-    def __init__(self, api_key: Optional[str] = None):
+    def __init__(self, api_key: str | None = None):
         """Initialize the weather tool."""
         super().__init__()
         # Try to get API key from parameter or environment
@@ -40,9 +39,7 @@ class WeatherTool(BaseTool):
 
         # Check if the API key is valid (not None or the placeholder)
         if not self.api_key:
-            logger.warning(
-                "No OpenWeather API key provided. Weather tool will return mock data."
-            )
+            logger.warning("No OpenWeather API key provided. Weather tool will return mock data.")
             self.api_key = None  # Explicitly set to None if invalid
         elif self.api_key == "your_openweather_api_key_here":
             logger.warning(
@@ -58,11 +55,7 @@ class WeatherTool(BaseTool):
             # Handle the case where location might be passed as a dictionary
             if isinstance(location, dict):
                 # Try to extract location from various possible fields
-                loc = (
-                    location.get("location")
-                    or location.get("query")
-                    or location.get("input")
-                )
+                loc = location.get("location") or location.get("query") or location.get("input")
                 if not loc:
                     # If no recognized field, try to use the first value
                     values = list(location.values())
@@ -93,12 +86,8 @@ class WeatherTool(BaseTool):
             response = httpx.get(url, params=params, timeout=10.0)
 
             if response.status_code != 200:
-                logger.error(
-                    f"OpenWeatherMap API error: {response.status_code} - {response.text}"
-                )
-                return (
-                    f"Error getting weather: {response.status_code} - {response.text}"
-                )
+                logger.error(f"OpenWeatherMap API error: {response.status_code} - {response.text}")
+                return f"Error getting weather: {response.status_code} - {response.text}"
 
             data = response.json()
 

@@ -3,13 +3,13 @@ Router for tool-related endpoints.
 """
 
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 # Import tools registry
-from tools.registry import get_tools_schema, toggle_tool, _tools
+from tools.registry import _tools, get_tools_schema, toggle_tool
 
 logger = logging.getLogger(__name__)
 
@@ -21,8 +21,8 @@ class ToolSchema(BaseModel):
 
     name: str
     description: str
-    parameters: Dict[str, Any]
-    required_parameters: List[str]
+    parameters: dict[str, Any]
+    required_parameters: list[str]
 
 
 class ToolToggleRequest(BaseModel):
@@ -80,7 +80,7 @@ async def update_tool_status(tool_name: str, toggle_request: ToolToggleRequest):
 
 
 @router.post("/{tool_name}/execute")
-async def execute_tool(tool_name: str, parameters: Dict[str, Any]):
+async def execute_tool(tool_name: str, parameters: dict[str, Any]):
     """Execute a tool with the given parameters."""
     try:
         # This would need to be implemented in the tools registry

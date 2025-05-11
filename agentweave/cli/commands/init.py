@@ -64,9 +64,7 @@ def init_command(
     # Validate template
     available_templates = get_available_templates()
     if template not in available_templates:
-        console.print(
-            f"[red]Template '{template}' not found. Available templates:[/red]"
-        )
+        console.print(f"[red]Template '{template}' not found. Available templates:[/red]")
         for t in available_templates:
             console.print(f"  - {t}")
         raise typer.Exit(1)
@@ -97,7 +95,7 @@ def init_command(
     if env_example_path.exists() and not skip_prompts:
         console.print("\n[cyan]Setting up environment variables:[/cyan]")
 
-        with open(env_example_path, "r") as f:
+        with open(env_example_path) as f:
             for line in f:
                 line = line.strip()
                 if line and not line.startswith("#") and "=" in line:
@@ -146,9 +144,7 @@ def init_command(
 
             progress.update(task, description="Project initialized successfully!")
 
-            console.print(
-                "\n[bold green]✓ Project initialized successfully![/bold green]"
-            )
+            console.print("\n[bold green]✓ Project initialized successfully![/bold green]")
             console.print("\n[cyan]To get started:[/cyan]")
             console.print(f"  cd {project_name}")
             console.print("  agentweave install_env")

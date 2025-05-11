@@ -111,9 +111,7 @@ def install_env(
                     )
                     raise typer.Exit(1)
 
-                progress.update(
-                    task, description="Backend dependencies installed successfully!"
-                )
+                progress.update(task, description="Backend dependencies installed successfully!")
             else:
                 console.print(
                     "[yellow]No requirements.txt found. Skipping backend dependencies installation.[/yellow]"
@@ -121,9 +119,7 @@ def install_env(
 
             # Step 3: Install the project as a development package
             if dev:
-                progress.update(
-                    task, description="Installing project as a development package..."
-                )
+                progress.update(task, description="Installing project as a development package...")
 
                 # Create or update setup.py if it doesn't exist
                 setup_py_path = project_dir / "setup.py"
@@ -166,9 +162,7 @@ setup(
                         capture_output=True,
                         cwd=str(project_dir),
                     )
-                    progress.update(
-                        task, description="Project installed as development package!"
-                    )
+                    progress.update(task, description="Project installed as development package!")
                 except subprocess.CalledProcessError as e:
                     console.print(
                         f"[red]Error installing project package: {e.stderr.decode()}[/red]"
@@ -194,9 +188,7 @@ setup(
                         console.print(
                             "[yellow]npm not found. Please install Node.js and npm to set up the frontend.[/yellow]"
                         )
-                        progress.update(
-                            task, description="Skipping frontend setup (npm not found)"
-                        )
+                        progress.update(task, description="Skipping frontend setup (npm not found)")
                     else:
                         # Install frontend dependencies
                         try:
@@ -247,13 +239,9 @@ VECTOR_STORE_DIR=./vector_store
                     console.print("[green]Created a basic .env file[/green]")
 
             # Update completion message
-            progress.update(
-                task, description="Environment setup completed successfully!"
-            )
+            progress.update(task, description="Environment setup completed successfully!")
 
-            console.print(
-                "\n[bold green]✓ Environment set up successfully![/bold green]"
-            )
+            console.print("\n[bold green]✓ Environment set up successfully![/bold green]")
 
             console.print("\n[cyan]To run the project:[/cyan]")
             console.print("  agentweave run")

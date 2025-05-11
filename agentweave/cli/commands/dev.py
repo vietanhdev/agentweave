@@ -141,15 +141,9 @@ def dev_command(
 def show_dev_dashboard(project_dir: Path):
     """Display a dashboard with useful development information."""
     # Gather project info
-    templates_dir = (
-        project_dir / "templates" if (project_dir / "templates").exists() else None
-    )
-    frontend_dir = (
-        project_dir / "frontend" if (project_dir / "frontend").exists() else None
-    )
-    backend_dir = (
-        project_dir / "backend" if (project_dir / "backend").exists() else None
-    )
+    templates_dir = project_dir / "templates" if (project_dir / "templates").exists() else None
+    frontend_dir = project_dir / "frontend" if (project_dir / "frontend").exists() else None
+    backend_dir = project_dir / "backend" if (project_dir / "backend").exists() else None
     test_dir = project_dir / "tests" if (project_dir / "tests").exists() else None
 
     panel = Panel(
@@ -186,14 +180,10 @@ def show_dev_dashboard(project_dir: Path):
         "✓" if templates_dir else "✗",
         str(templates_dir) if templates_dir else "Not found",
     )
-    table.add_row(
-        "Tests", "✓" if test_dir else "✗", str(test_dir) if test_dir else "Not found"
-    )
+    table.add_row("Tests", "✓" if test_dir else "✗", str(test_dir) if test_dir else "Not found")
 
     console.print(table)
-    console.print(
-        "\n[yellow]Starting development server with hot reloading...[/yellow]\n"
-    )
+    console.print("\n[yellow]Starting development server with hot reloading...[/yellow]\n")
 
 
 def run_tests(project_dir: Path):
@@ -222,6 +212,7 @@ def run_tests(project_dir: Path):
             capture_output=True,
             text=True,
             cwd=str(project_dir),
+            check=False,
         )
         if result.returncode != 0:
             console.print("[red]Tests failed:[/red]")

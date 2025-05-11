@@ -5,7 +5,7 @@ Document processing module for handling knowledge base documents.
 import logging
 import os
 from datetime import datetime
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Any
 
 from langchain_community.document_loaders import (
     CSVLoader,
@@ -42,7 +42,7 @@ def get_loader_for_file(file_path: str):
         return TextLoader(file_path)
 
 
-def process_document(file_path: str) -> Tuple[List[Document], Dict[str, Any]]:
+def process_document(file_path: str) -> tuple[list[Document], dict[str, Any]]:
     """
     Process a document file into a list of Documents and return processing metadata.
 
@@ -133,7 +133,7 @@ def get_vectorstore(docs_dir: str = DOCS_DIR):
         return None
 
 
-def query_knowledge_base(query: str, k: int = 3) -> List[Document]:
+def query_knowledge_base(query: str, k: int = 3) -> list[Document]:
     """Query the knowledge base for relevant documents."""
     try:
         vectorstore = get_vectorstore()
@@ -149,8 +149,8 @@ def query_knowledge_base(query: str, k: int = 3) -> List[Document]:
 
 
 def add_document_to_knowledge_base(
-    file_path: str, metadata: Optional[Dict[str, Any]] = None
-) -> Dict[str, Any]:
+    file_path: str, metadata: dict[str, Any] | None = None
+) -> dict[str, Any]:
     """
     Process a document and add it to the knowledge base.
 
@@ -235,14 +235,11 @@ def add_document_to_knowledge_base(
         return result
 
 
-def get_document_metadata(doc_id: str) -> Optional[Dict[str, Any]]:
+def get_document_metadata(doc_id: str) -> dict[str, Any] | None:
     """Retrieve metadata for a specific document."""
     return DOCUMENT_METADATA.get(doc_id)
 
 
-def list_all_documents() -> List[Dict[str, Any]]:
+def list_all_documents() -> list[dict[str, Any]]:
     """List all documents with their metadata."""
-    return [
-        {"document_id": doc_id, **metadata}
-        for doc_id, metadata in DOCUMENT_METADATA.items()
-    ]
+    return [{"document_id": doc_id, **metadata} for doc_id, metadata in DOCUMENT_METADATA.items()]

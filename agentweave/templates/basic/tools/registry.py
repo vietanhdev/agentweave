@@ -9,7 +9,7 @@ import inspect
 import logging
 import os
 import pkgutil
-from typing import Any, Dict, List, Optional, Type
+from typing import Any
 
 from langchain_core.tools import BaseTool
 
@@ -23,7 +23,7 @@ _tools_enabled = {}
 _name_to_class_map = {}
 
 
-def register_tool(tool_class: Type[BaseTool]) -> Type[BaseTool]:
+def register_tool(tool_class: type[BaseTool]) -> type[BaseTool]:
     """
     Register a tool class in the global registry.
 
@@ -55,15 +55,13 @@ def register_tool(tool_class: Type[BaseTool]) -> Type[BaseTool]:
     # Map instance name to class name if available
     if instance_name:
         _name_to_class_map[instance_name] = class_name
-        logger.info(
-            f"Mapped instance name '{instance_name}' to class name '{class_name}'"
-        )
+        logger.info(f"Mapped instance name '{instance_name}' to class name '{class_name}'")
 
     logger.info(f"Registered tool: {class_name}")
     return tool_class
 
 
-def get_available_tools() -> List[BaseTool]:
+def get_available_tools() -> list[BaseTool]:
     """
     Get all available tools.
 
@@ -86,7 +84,7 @@ def get_available_tools() -> List[BaseTool]:
     return tools
 
 
-def get_tools_schema() -> List[Dict[str, Any]]:
+def get_tools_schema() -> list[dict[str, Any]]:
     """
     Get a list of all registered tools with their schemas.
     """
@@ -105,9 +103,7 @@ def get_tools_schema() -> List[Dict[str, Any]]:
                 continue
 
             if not hasattr(tool_instance, "description"):
-                logger.warning(
-                    f"Tool {class_name} missing description, using class name"
-                )
+                logger.warning(f"Tool {class_name} missing description, using class name")
                 description = class_name
             else:
                 description = tool_instance.description
@@ -148,9 +144,7 @@ def get_tools_schema() -> List[Dict[str, Any]]:
     return tools_list
 
 
-def get_tool_by_name(
-    name: str, config: Optional[Dict[str, Any]] = None
-) -> Optional[BaseTool]:
+def get_tool_by_name(name: str, config: dict[str, Any] | None = None) -> BaseTool | None:
     """
     Get a tool instance by name with optional configuration.
     """
@@ -258,7 +252,7 @@ def _load_tools():
     modules_found = list(pkgutil.iter_modules([current_dir]))
     logger.info(f"Found modules: {[name for _, name, _ in modules_found]}")
 
-    for _, name, is_pkg in modules_found:
+    for _, name, _is_pkg in modules_found:
         if name != "registry" and not name.startswith("_"):
             try:
                 logger.info(f"Attempting to import module: tools.{name}")
@@ -277,9 +271,7 @@ def _load_tools():
                         tool_classes_found.append(attr_name)
 
                 if tool_classes_found:
-                    logger.info(
-                        f"Registered tool classes from {name}: {tool_classes_found}"
-                    )
+                    logger.info(f"Registered tool classes from {name}: {tool_classes_found}")
                 else:
                     logger.warning(f"No tool classes found in module {name}")
 
@@ -304,9 +296,7 @@ def _load_tools():
                         f"Added mapping from instance name '{instance_name}' to class name '{class_name}'"
                     )
         except Exception as e:
-            logger.warning(
-                f"Error initializing tool {class_name} for name mapping: {str(e)}"
-            )
+            logger.warning(f"Error initializing tool {class_name} for name mapping: {str(e)}")
 
     logger.info(f"Finished loading tools. Available tools: {list(_tools.keys())}")
     logger.info(f"Name to class mappings: {_name_to_class_map}")

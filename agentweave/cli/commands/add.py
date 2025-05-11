@@ -100,9 +100,7 @@ def tool(
                 console.print(f"  - {t}")
             raise typer.Exit(1)
 
-        console.print(
-            f"[bold cyan]Adding tool: [/bold cyan][bold white]{tool_name}[/bold white]"
-        )
+        console.print(f"[bold cyan]Adding tool: [/bold cyan][bold white]{tool_name}[/bold white]")
 
         with Progress(
             SpinnerColumn(),
@@ -116,9 +114,7 @@ def tool(
 
             progress.update(task, description="Tool added successfully!")
 
-        console.print(
-            f"\n[bold green]✓ Tool '{tool_name}' added successfully![/bold green]"
-        )
+        console.print(f"\n[bold green]✓ Tool '{tool_name}' added successfully![/bold green]")
 
 
 @app.command()
@@ -136,16 +132,12 @@ def memory(
 
     available_memories = get_available_memories()
     if memory_type not in available_memories:
-        console.print(
-            f"[red]Memory type '{memory_type}' not found. Available memory types:[/red]"
-        )
+        console.print(f"[red]Memory type '{memory_type}' not found. Available memory types:[/red]")
         for m in available_memories:
             console.print(f"  - {m}")
         raise typer.Exit(1)
 
-    console.print(
-        f"[bold cyan]Adding memory: [/bold cyan][bold white]{memory_type}[/bold white]"
-    )
+    console.print(f"[bold cyan]Adding memory: [/bold cyan][bold white]{memory_type}[/bold white]")
 
     with Progress(
         SpinnerColumn(),
@@ -166,9 +158,7 @@ def memory(
 
 @app.command()
 def monitor(
-    monitor_name: str = typer.Argument(
-        ..., help="Name of the monitoring component to add"
-    ),
+    monitor_name: str = typer.Argument(..., help="Name of the monitoring component to add"),
 ):
     """
     Add a monitoring component to the project.
@@ -181,16 +171,12 @@ def monitor(
 
     available_monitors = get_available_monitors()
     if monitor_name not in available_monitors:
-        console.print(
-            f"[red]Monitor '{monitor_name}' not found. Available monitors:[/red]"
-        )
+        console.print(f"[red]Monitor '{monitor_name}' not found. Available monitors:[/red]")
         for m in available_monitors:
             console.print(f"  - {m}")
         raise typer.Exit(1)
 
-    console.print(
-        f"[bold cyan]Adding monitor: [/bold cyan][bold white]{monitor_name}[/bold white]"
-    )
+    console.print(f"[bold cyan]Adding monitor: [/bold cyan][bold white]{monitor_name}[/bold white]")
 
     with Progress(
         SpinnerColumn(),

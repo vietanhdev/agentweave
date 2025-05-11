@@ -5,7 +5,7 @@ Template utilities for AgentWeave.
 import os
 import shutil
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 import jinja2
 
@@ -17,7 +17,7 @@ def get_templates_dir() -> Path:
     return get_package_path() / "templates"
 
 
-def render_template_string(template_string: str, context: Dict[str, Any]) -> str:
+def render_template_string(template_string: str, context: dict[str, Any]) -> str:
     """Render a template string with the given context."""
     template = jinja2.Template(template_string)
     return template.render(**context)
@@ -26,7 +26,7 @@ def render_template_string(template_string: str, context: Dict[str, Any]) -> str
 def render_template_file(
     template_filename: str,
     output_path: Path,
-    context: Dict[str, Any],
+    context: dict[str, Any],
 ) -> None:
     """Render a template file with the given context."""
     templates_dir = get_templates_dir()
@@ -55,7 +55,7 @@ def render_template_file(
 def copy_template_dir(
     template_name: str,
     output_dir: Path,
-    context: Dict[str, Any],
+    context: dict[str, Any],
 ) -> None:
     """Copy a template directory to the output directory."""
     templates_dir = get_templates_dir()
@@ -91,7 +91,7 @@ def copy_template_dir(
 
             # If the file is a Jinja template, render it
             if file.endswith(".jinja2"):
-                with open(src_file, "r") as f:
+                with open(src_file) as f:
                     template_content = f.read()
 
                 rendered_content = render_template_string(template_content, context)

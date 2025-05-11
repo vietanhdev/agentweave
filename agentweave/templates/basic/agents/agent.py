@@ -10,7 +10,7 @@ import operator
 import os
 import uuid
 from datetime import datetime
-from typing import Annotated, Any, Dict, List, Optional, TypedDict
+from typing import Annotated, Any, TypedDict
 
 from backend.utils.config import get_llm_config
 from langchain_core.messages import (
@@ -57,9 +57,9 @@ Important: You must use the appropriate tool rather than making up information y
 class AgentState(TypedDict):
     """State schema for the agent."""
 
-    messages: Annotated[List[AnyMessage], operator.add]
-    conversation_id: Optional[str]
-    context: Dict[str, Any]
+    messages: Annotated[list[AnyMessage], operator.add]
+    conversation_id: str | None
+    context: dict[str, Any]
 
 
 class Agent:
@@ -69,8 +69,8 @@ class Agent:
 
     def __init__(
         self,
-        model_config: Dict[str, Any],
-        tools: List[BaseTool],
+        model_config: dict[str, Any],
+        tools: list[BaseTool],
         system_prompt: str = DEFAULT_SYSTEM_PROMPT,
     ):
         """Initialize an agent with model configuration, tools, and system prompt."""
@@ -82,9 +82,7 @@ class Agent:
 
         # Make sure we have at least one tool
         if not tools:
-            logger.warning(
-                "No tools were provided. Agent might not function correctly."
-            )
+            logger.warning("No tools were provided. Agent might not function correctly.")
 
         # Process tools to ensure API keys are properly set
         processed_tools = []
@@ -125,9 +123,7 @@ class Agent:
                                     f"Weather tool initialized: {tool.name} with API key: {api_key[:4]}..."
                                 )
                     except ImportError:
-                        logger.warning(
-                            "Could not import WeatherTool - using original tool"
-                        )
+                        logger.warning("Could not import WeatherTool - using original tool")
 
                 processed_tools.append(tool)
                 logger.info(f"Added tool: {tool.name}")
@@ -157,13 +153,9 @@ class Agent:
                 try:
                     # Try with the current API
                     self.llm = self.model.bind_tools(processed_tools)
-                    logger.info(
-                        f"Successfully bound {len(processed_tools)} tools to LLM"
-                    )
+                    logger.info(f"Successfully bound {len(processed_tools)} tools to LLM")
                 except Exception as e:
-                    logger.error(
-                        f"Error binding tools to model with bind_tools: {str(e)}"
-                    )
+                    logger.error(f"Error binding tools to model with bind_tools: {str(e)}")
 
                     # Try legacy method
                     try:
@@ -172,9 +164,7 @@ class Agent:
                         )
                         logger.info("Successfully bound tools using legacy method")
                     except Exception as e2:
-                        logger.error(
-                            f"Error binding tools with legacy method: {str(e2)}"
-                        )
+                        logger.error(f"Error binding tools with legacy method: {str(e2)}")
                         self.llm = self.model
                         logger.warning("Using LLM without tool binding")
             else:
@@ -199,9 +189,7 @@ class Agent:
         graph.add_node("action", self.execute_tool)
 
         # Add conditional edges
-        graph.add_conditional_edges(
-            "llm", self.should_use_tool, {True: "action", False: END}
-        )
+        graph.add_conditional_edges("llm", self.should_use_tool, {True: "action", False: END})
 
         graph.add_edge("action", "llm")
         graph.set_entry_point("llm")
@@ -209,7 +197,7 @@ class Agent:
         # Compile the graph
         self.graph = graph.compile(checkpointer=memory)
 
-    def call_llm(self, state: AgentState) -> Dict[str, Any]:
+    def call_llm(self, state: AgentState) -> dict[str, Any]:
         """Call the LLM with the current conversation history."""
         # Create step to track this action
         step_id = len(self.execution_steps) + 1
@@ -232,11 +220,7 @@ class Agent:
                 step["output"] = "No messages to process"
                 step["status"] = "warning"
                 self.execution_steps.append(step)
-                return {
-                    "messages": [
-                        AIMessage(content="I don't have any messages to respond to.")
-                    ]
-                }
+                return {"messages": [AIMessage(content="I don't have any messages to respond to.")]}
 
             # Update step input with messages
             step["input"]["messages"] = [
@@ -281,9 +265,7 @@ class Agent:
             response = self.llm.invoke(prompt_messages)
 
             # Update the step with the result
-            step["output"] = (
-                response.content if hasattr(response, "content") else str(response)
-            )
+            step["output"] = response.content if hasattr(response, "content") else str(response)
             step["status"] = "success"
             self.execution_steps.append(step)
 
@@ -348,9 +330,7 @@ class Agent:
             # Check if any weather pattern is in the content
             for pattern in weather_patterns:
                 if pattern in content:
-                    logger.info(
-                        f"Detected weather pattern: '{pattern}' in message: '{content}'"
-                    )
+                    logger.info(f"Detected weather pattern: '{pattern}' in message: '{content}'")
                     return True
 
             # No tool use detected from content
@@ -359,7 +339,7 @@ class Agent:
         # Default case - no tool use
         return False
 
-    def execute_tool(self, state: AgentState) -> Dict[str, Any]:
+    def execute_tool(self, state: AgentState) -> dict[str, Any]:
         """
         Execute tools called by the LLM.
 
@@ -395,9 +375,7 @@ class Agent:
         for tool_call in tool_calls:
             # Extract tool information safely
             if isinstance(tool_call, dict):
-                tool_name = tool_call.get("name") or tool_call.get("function", {}).get(
-                    "name"
-                )
+                tool_name = tool_call.get("name") or tool_call.get("function", {}).get("name")
                 tool_args = tool_call.get("args") or tool_call.get("function", {}).get(
                     "arguments", "{}"
                 )
@@ -411,17 +389,13 @@ class Agent:
                 # Try to get name
                 if hasattr(tool_call, "name"):
                     tool_name = tool_call.name
-                elif hasattr(tool_call, "function") and hasattr(
-                    tool_call.function, "name"
-                ):
+                elif hasattr(tool_call, "function") and hasattr(tool_call.function, "name"):
                     tool_name = tool_call.function.name
 
                 # Try to get args
                 if hasattr(tool_call, "args"):
                     tool_args = tool_call.args
-                elif hasattr(tool_call, "function") and hasattr(
-                    tool_call.function, "arguments"
-                ):
+                elif hasattr(tool_call, "function") and hasattr(tool_call.function, "arguments"):
                     tool_args = tool_call.function.arguments
 
                 # Try to get id
@@ -429,9 +403,7 @@ class Agent:
                     tool_id = tool_call.id
 
             # Log what we extracted
-            logger.info(
-                f"Extracted tool call: name={tool_name}, args={tool_args}, id={tool_id}"
-            )
+            logger.info(f"Extracted tool call: name={tool_name}, args={tool_args}, id={tool_id}")
 
             # Convert string arguments to dict if needed
             if isinstance(tool_args, str):
@@ -442,9 +414,7 @@ class Agent:
                         f"Failed to parse tool arguments: {str(e)}. Using as string input."
                     )
                     tool_args = (
-                        {"location": tool_args}
-                        if tool_name == "weather"
-                        else {"input": tool_args}
+                        {"location": tool_args} if tool_name == "weather" else {"input": tool_args}
                     )
 
             # Create a step to track this tool execution
@@ -535,9 +505,7 @@ class Agent:
 
                         # Add step for tracking
                         step["output"] = fallback_msg
-                        step["status"] = (
-                            "success"  # Mark as success since we provided a fallback
-                        )
+                        step["status"] = "success"  # Mark as success since we provided a fallback
                         self.execution_steps.append(step)
                     else:
                         # Update the step with the error
@@ -575,7 +543,7 @@ class Agent:
         return {"messages": results}
 
 
-def get_agent_config() -> Dict[str, Any]:
+def get_agent_config() -> dict[str, Any]:
     """Get the agent configuration."""
     config = get_llm_config()
 
@@ -592,7 +560,7 @@ def get_agent_config() -> Dict[str, Any]:
     return config
 
 
-def create_agent(conversation_id: Optional[str] = None, reset: bool = False) -> Any:
+def create_agent(conversation_id: str | None = None, reset: bool = False) -> Any:
     """
     Create or get an agent for a conversation.
 
@@ -664,9 +632,7 @@ def create_agent(conversation_id: Optional[str] = None, reset: bool = False) -> 
                 logger.error(traceback.format_exc())
 
             if not tools:
-                logger.warning(
-                    "No tools could be created. The agent might not function correctly."
-                )
+                logger.warning("No tools could be created. The agent might not function correctly.")
         except Exception as e:
             logger.error(f"Error setting up tools: {str(e)}")
             import traceback
@@ -680,9 +646,7 @@ def create_agent(conversation_id: Optional[str] = None, reset: bool = False) -> 
         )
 
         # Create a new agent
-        agent = Agent(
-            model_config=config, tools=tools, system_prompt=DEFAULT_SYSTEM_PROMPT
-        )
+        agent = Agent(model_config=config, tools=tools, system_prompt=DEFAULT_SYSTEM_PROMPT)
 
         _agents[conversation_id] = {
             "agent": agent,
@@ -694,11 +658,11 @@ def create_agent(conversation_id: Optional[str] = None, reset: bool = False) -> 
 
 
 def invoke_agent(
-    agent: Dict[str, Any],
+    agent: dict[str, Any],
     query: str,
-    conversation_id: Optional[str] = None,
-    context: Optional[Dict[str, Any]] = None,
-) -> Dict[str, Any]:
+    conversation_id: str | None = None,
+    context: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """
     Invoke the agent with a query.
 

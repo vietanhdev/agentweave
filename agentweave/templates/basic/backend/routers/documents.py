@@ -4,15 +4,15 @@ Router for document-related endpoints.
 
 import logging
 import os
-from typing import List, Optional, Dict, Any
-from fastapi import APIRouter, File, Form, UploadFile, HTTPException, Query
-from pydantic import BaseModel
+from typing import Any
 
 from agents.document_processor import (
     add_document_to_knowledge_base,
     get_document_metadata,
     list_all_documents,
 )
+from fastapi import APIRouter, File, Form, HTTPException, Query, UploadFile
+from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
@@ -26,10 +26,10 @@ os.makedirs(DOCS_DIR, exist_ok=True)
 class DocumentMetadata(BaseModel):
     """Model for document metadata."""
 
-    description: Optional[str] = None
-    tags: Optional[List[str]] = None
-    category: Optional[str] = None
-    custom_metadata: Optional[Dict[str, Any]] = None
+    description: str | None = None
+    tags: list[str] | None = None
+    category: str | None = None
+    custom_metadata: dict[str, Any] | None = None
 
 
 class Document(BaseModel):
@@ -39,20 +39,20 @@ class Document(BaseModel):
     filename: str
     size: int
     type: str
-    description: Optional[str] = None
-    tags: Optional[List[str]] = None
-    category: Optional[str] = None
-    ingestion_status: Optional[Dict[str, Any]] = None
-    chunk_count: Optional[int] = None
-    created_at: Optional[str] = None
+    description: str | None = None
+    tags: list[str] | None = None
+    category: str | None = None
+    ingestion_status: dict[str, Any] | None = None
+    chunk_count: int | None = None
+    created_at: str | None = None
 
 
 @router.post("/upload")
 async def upload_document(
     file: UploadFile = File(...),
-    description: Optional[str] = Form(None),
-    tags: Optional[str] = Form(None),
-    category: Optional[str] = Form(None),
+    description: str | None = Form(None),
+    tags: str | None = Form(None),
+    category: str | None = Form(None),
 ):
     """Upload a document to use as knowledge base."""
     try:
@@ -108,8 +108,8 @@ async def upload_document(
 
 @router.get("/")
 async def list_documents(
-    category: Optional[str] = Query(None),
-    tag: Optional[str] = Query(None),
+    category: str | None = Query(None),
+    tag: str | None = Query(None),
 ):
     """List all uploaded documents with optional filtering."""
     try:
@@ -122,10 +122,7 @@ async def list_documents(
 
             for doc_meta in processor_docs:
                 # Skip if we're filtering by category and it doesn't match
-                if (
-                    category
-                    and doc_meta.get("user_metadata", {}).get("category") != category
-                ):
+                if category and doc_meta.get("user_metadata", {}).get("category") != category:
                     continue
 
                 # Skip if we're filtering by tag and it doesn't match
@@ -142,9 +139,7 @@ async def list_documents(
                         "id": doc_id,
                         "filename": user_metadata.get("filename", doc_id),
                         "size": processing_stats.get("file_size", 0),
-                        "type": user_metadata.get(
-                            "content_type", "application/octet-stream"
-                        ),
+                        "type": user_metadata.get("content_type", "application/octet-stream"),
                         "description": user_metadata.get("description"),
                         "tags": user_metadata.get("tags", []),
                         "category": user_metadata.get("category"),
@@ -194,9 +189,7 @@ async def get_document(doc_id: str):
                     "id": doc_id,
                     "filename": user_metadata.get("filename", doc_id),
                     "size": processing_stats.get("file_size", 0),
-                    "type": user_metadata.get(
-                        "content_type", "application/octet-stream"
-                    ),
+                    "type": user_metadata.get("content_type", "application/octet-stream"),
                     "description": user_metadata.get("description"),
                     "tags": user_metadata.get("tags", []),
                     "category": user_metadata.get("category"),
@@ -289,7 +282,7 @@ async def get_document_content(doc_id: str):
         ]
 
         if any(content_type.startswith(prefix) for prefix in text_content_types):
-            with open(file_path, "r", encoding="utf-8") as f:
+            with open(file_path, encoding="utf-8") as f:
                 content = f.read()
             return {"content": content, "content_type": content_type}
 

@@ -5,17 +5,17 @@ This is the main entry point for the FastAPI backend server.
 """
 
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 # Import the agent
 from agents.agent import create_agent, invoke_agent
-
-# Import routers - use absolute imports
-from backend.routers import agent, tools, documents
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+
+# Import routers - use absolute imports
+from backend.routers import agent, documents, tools
 
 # Load environment variables from .env file
 load_dotenv()
@@ -54,8 +54,8 @@ class QueryRequest(BaseModel):
     """Request model for agent queries."""
 
     query: str
-    conversation_id: Optional[str] = None
-    context: Optional[Dict[str, Any]] = None
+    conversation_id: str | None = None
+    context: dict[str, Any] | None = None
 
 
 class QueryResponse(BaseModel):
@@ -63,7 +63,7 @@ class QueryResponse(BaseModel):
 
     response: str
     conversation_id: str
-    metadata: Optional[Dict[str, Any]] = None
+    metadata: dict[str, Any] | None = None
 
 
 @app.get("/")

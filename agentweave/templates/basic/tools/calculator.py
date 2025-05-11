@@ -3,7 +3,6 @@ Calculator tool for performing basic mathematical operations.
 """
 
 import logging
-from typing import Union
 
 from langchain_core.tools import BaseTool
 from pydantic import BaseModel, Field
@@ -32,10 +31,12 @@ class CalculatorTool(BaseTool):
     """Tool that adds, subtracts, multiplies, or divides two numbers."""
 
     name: str = "calculator"
-    description: str = "A calculator for performing basic math operations (add, subtract, multiply, divide)"
+    description: str = (
+        "A calculator for performing basic math operations (add, subtract, multiply, divide)"
+    )
     args_schema: type[BaseModel] = CalculatorInput
 
-    def _run(self, operation: str, a: float, b: float, **kwargs) -> Union[float, str]:
+    def _run(self, operation: str, a: float, b: float, **kwargs) -> float | str:
         """Execute the calculator."""
         operation = operation.lower().strip()
 
@@ -56,9 +57,7 @@ class CalculatorTool(BaseTool):
             logger.error(f"Error in calculator: {str(e)}")
             return f"Error: {str(e)}"
 
-    async def _arun(
-        self, operation: str, a: float, b: float, **kwargs
-    ) -> Union[float, str]:
+    async def _arun(self, operation: str, a: float, b: float, **kwargs) -> float | str:
         """Execute the calculator asynchronously."""
         return self._run(operation, a, b, **kwargs)
 

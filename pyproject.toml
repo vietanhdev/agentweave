@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agentweave"
-version = "0.0.5"
+version = "0.0.6"
 description = "CLI tool for initializing and managing AI agent projects based on LangGraph"
 readme = "README.md"
 authors = [
@@ -36,6 +36,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0.0",
+    "ruff==0.11.9",
 ]
 
 [project.scripts]
@@ -50,9 +51,13 @@ agentweave = ["templates/**/.*", "templates/**/*", "templates/basic/.env.example
 
 [tool.setuptools.exclude-package-data]
 agentweave = [
+    # Environment files
     "**/.env", "**/.env.*", "!**/templates/basic/.env.example",
+    
+    # Node.js and Next.js
     "**/node_modules/**", "templates/basic/frontend/node_modules/**",
     "**/.next/**", "templates/basic/frontend/.next/**",
+    
     # Test files
     "**/tests/**", "**/test_*.py", "**/*_test.py",
 
@@ -78,3 +83,30 @@ agentweave = [
     "**/*.py[cod]", "**/*.log", "**/*.log.*", "**/*.swp", "**/*.swo",
     "**/*.db", "**/*.sqlite"
 ]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "I"  # isort
+]
+ignore = ["B904"]
+
+exclude = [
+    ".git",
+    ".github",
+    "__pycache__",
+    "*.pyc",
+    ".ruff_cache",
+    "dist",
+    "build",
+    "*.egg-info",
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 20
+
+[tool.ruff.lint.isort]
+known-first-party = ["agentweave"]

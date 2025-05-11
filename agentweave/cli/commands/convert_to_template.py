@@ -67,9 +67,7 @@ def main(
                 exclude_paths=exclude_patterns,
             )
 
-            progress.update(
-                task, description="Project converted to template successfully!"
-            )
+            progress.update(task, description="Project converted to template successfully!")
 
             console.print(
                 f"\n[bold green]✓ Project successfully converted to template: {template_name}[/bold green]"
@@ -78,9 +76,7 @@ def main(
             console.print(
                 "  1. Edit files in the template to replace specific values with placeholders like {{project_name}}"
             )
-            console.print(
-                "  2. Update the schema.yaml file with appropriate configuration options"
-            )
+            console.print("  2. Update the schema.yaml file with appropriate configuration options")
             console.print(
                 "  3. Use your new template with: agentweave init my-new-project -t "
                 + template_name

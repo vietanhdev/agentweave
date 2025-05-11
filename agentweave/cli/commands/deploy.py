@@ -110,13 +110,12 @@ def docker():
                 cwd=project_dir,
                 capture_output=True,
                 text=True,
+                check=False,
             )
 
             if result.returncode != 0:
                 progress.stop()
-                console.print(
-                    f"[red]Error building Docker image: {result.stderr}[/red]"
-                )
+                console.print(f"[red]Error building Docker image: {result.stderr}[/red]")
                 raise typer.Exit(1)
 
             progress.update(task, description="Docker image built successfully!")
@@ -126,9 +125,7 @@ def docker():
             console.print(f"[red]Error building Docker image: {str(e)}[/red]")
             raise typer.Exit(1)
 
-    console.print(
-        f"\n[bold green]✓ Docker image '{image_name}' built successfully![/bold green]"
-    )
+    console.print(f"\n[bold green]✓ Docker image '{image_name}' built successfully![/bold green]")
     console.print("\n[cyan]To run your agent:[/cyan]")
     console.print(f"  docker run -p 8000:8000 {image_name}")
 
@@ -173,16 +170,12 @@ def cloud(
         TextColumn("[bold cyan]{task.description}[/bold cyan]"),
         console=console,
     ) as progress:
-        task = progress.add_task(
-            f"Preparing deployment for {provider.upper()}...", total=None
-        )
+        task = progress.add_task(f"Preparing deployment for {provider.upper()}...", total=None)
 
         # Create deployment package
         # TODO: Implement actual cloud deployment logic per provider
 
-        progress.update(
-            task, description=f"Deployment package for {provider.upper()} prepared!"
-        )
+        progress.update(task, description=f"Deployment package for {provider.upper()} prepared!")
 
     console.print(
         f"\n[bold yellow]Cloud deployment to {provider.upper()} is a beta feature.[/bold yellow]"

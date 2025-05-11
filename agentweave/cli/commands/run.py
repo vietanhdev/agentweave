@@ -36,9 +36,7 @@ def cleanup_processes():
                     except Exception:
                         pass
                 process.terminate()
-                console.print(
-                    f"[yellow]Terminated process with PID {proc.pid}[/yellow]"
-                )
+                console.print(f"[yellow]Terminated process with PID {proc.pid}[/yellow]")
         except (psutil.NoSuchProcess, ProcessLookupError):
             # Process already terminated
             pass
@@ -144,9 +142,7 @@ def run_command(
 
     # Handle Ctrl+C gracefully
     def signal_handler(sig, frame):
-        console.print(
-            "\n[yellow]Received termination signal. Shutting down servers...[/yellow]"
-        )
+        console.print("\n[yellow]Received termination signal. Shutting down servers...[/yellow]")
         cleanup_processes()
         console.print("[green]Servers shut down successfully.[/green]")
         sys.exit(0)
@@ -218,9 +214,7 @@ def run_backend(project_dir: Path, port: int, reload: bool):
     try:
         console.print(f"[bold]Starting backend server on port {port}[/bold]")
         console.print(f"[cyan]API available at: http://localhost:{port}[/cyan]")
-        console.print(
-            f"[cyan]API docs available at: http://localhost:{port}/docs[/cyan]"
-        )
+        console.print(f"[cyan]API docs available at: http://localhost:{port}/docs[/cyan]")
         console.print(f"[dim]Using module: {module_path}[/dim]")
 
         # Use start_new_session on Unix-like systems to create a new process group
@@ -250,9 +244,7 @@ def run_frontend(project_dir: Path, port: int):
 
     # Check if the frontend directory exists
     if not frontend_dir.exists():
-        console.print(
-            "[red]Frontend directory not found. Cannot run frontend server.[/red]"
-        )
+        console.print("[red]Frontend directory not found. Cannot run frontend server.[/red]")
         raise typer.Exit(1)
 
     # Check if package.json exists
@@ -325,22 +317,14 @@ def run_both(project_dir: Path, backend_port: int, frontend_port: int, reload: b
         console.print(
             "[yellow]Frontend server failed to start. Backend server is still running.[/yellow]"
         )
-        console.print(
-            f"[cyan]Access the backend at: http://localhost:{backend_port}[/cyan]"
-        )
-        console.print(
-            f"[cyan]API docs available at: http://localhost:{backend_port}/docs[/cyan]"
-        )
+        console.print(f"[cyan]Access the backend at: http://localhost:{backend_port}[/cyan]")
+        console.print(f"[cyan]API docs available at: http://localhost:{backend_port}/docs[/cyan]")
         return
 
     console.print("\n[bold green]✓ Both servers started successfully![/bold green]")
     console.print(f"[cyan]Backend available at: http://localhost:{backend_port}[/cyan]")
-    console.print(
-        f"[cyan]API docs available at: http://localhost:{backend_port}/docs[/cyan]"
-    )
-    console.print(
-        f"[cyan]Frontend available at: http://localhost:{frontend_port}[/cyan]"
-    )
+    console.print(f"[cyan]API docs available at: http://localhost:{backend_port}/docs[/cyan]")
+    console.print(f"[cyan]Frontend available at: http://localhost:{frontend_port}[/cyan]")
     console.print("\n[yellow]Press Ctrl+C to stop all servers[/yellow]")
 
     # Wait for processes to complete

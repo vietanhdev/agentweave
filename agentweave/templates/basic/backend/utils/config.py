@@ -4,7 +4,7 @@ Configuration utilities for the backend.
 
 import os
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 import yaml
 from dotenv import load_dotenv
@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def load_config(config_path: Optional[Path] = None) -> Dict[str, Any]:
+def load_config(config_path: Path | None = None) -> dict[str, Any]:
     """
     Load the project configuration from the agentweave.yaml file.
     """
@@ -25,13 +25,13 @@ def load_config(config_path: Optional[Path] = None) -> Dict[str, Any]:
     if not config_path.exists():
         raise FileNotFoundError(f"Configuration file not found: {config_path}")
 
-    with open(config_path, "r") as f:
+    with open(config_path) as f:
         config = yaml.safe_load(f)
 
     return config
 
 
-def get_env_var(name: str, default: Optional[str] = None) -> str:
+def get_env_var(name: str, default: str | None = None) -> str:
     """
     Get an environment variable with an optional default value.
     """
@@ -41,7 +41,7 @@ def get_env_var(name: str, default: Optional[str] = None) -> str:
     return value
 
 
-def get_llm_config() -> Dict[str, Any]:
+def get_llm_config() -> dict[str, Any]:
     """
     Get the LLM configuration from the environment or config file.
     """

@@ -9,7 +9,7 @@ import os
 import re
 import shutil
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import yaml
 
@@ -24,7 +24,7 @@ def get_templates_dir() -> Path:
 class TemplateGenerator:
     """Template generator that uses declarative configuration for template generation."""
 
-    def __init__(self, template_name: str, output_dir: Path, config: Dict[str, Any]):
+    def __init__(self, template_name: str, output_dir: Path, config: dict[str, Any]):
         """
         Initialize the template generator.
 
@@ -59,9 +59,9 @@ class TemplateGenerator:
         # Validate config against schema
         self._validate_config()
 
-    def _load_schema(self) -> Dict[str, Any]:
+    def _load_schema(self) -> dict[str, Any]:
         """Load and parse the template schema file."""
-        with open(self.schema_path, "r") as f:
+        with open(self.schema_path) as f:
             return yaml.safe_load(f)
 
     def _validate_config(self) -> None:
@@ -73,9 +73,7 @@ class TemplateGenerator:
         if "required" in self.schema:
             for field in self.schema["required"]:
                 if field not in self.config:
-                    raise ValueError(
-                        f"Required configuration field '{field}' is missing"
-                    )
+                    raise ValueError(f"Required configuration field '{field}' is missing")
 
         # Type validation could be added here
         # For now, we'll keep it simple
@@ -118,7 +116,7 @@ class TemplateGenerator:
         """Process a single file, replacing placeholders with config values."""
         # Check if file is binary or text
         try:
-            with open(src_file, "r", encoding="utf-8") as f:
+            with open(src_file, encoding="utf-8") as f:
                 content = f.read()
 
             # Replace placeholders in the content
@@ -139,9 +137,7 @@ class TemplateGenerator:
     def generate(self) -> None:
         """Generate the project from the template."""
         if not self.template_dir.exists():
-            raise FileNotFoundError(
-                f"Template directory not found: {self.template_name}"
-            )
+            raise FileNotFoundError(f"Template directory not found: {self.template_name}")
 
         # Create the output directory if it doesn't exist
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -182,7 +178,7 @@ class TemplateGenerator:
 def generate_from_template(
     template_name: str,
     output_dir: Path,
-    config: Dict[str, Any],
+    config: dict[str, Any],
 ) -> None:
     """
     Generate a project from a template.
@@ -199,8 +195,8 @@ def generate_from_template(
 def create_template_from_project(
     project_dir: Path,
     template_name: str,
-    output_dir: Optional[Path] = None,
-    exclude_paths: Optional[List[str]] = None,
+    output_dir: Path | None = None,
+    exclude_paths: list[str] | None = None,
 ) -> None:
     """
     Create a template from an existing project.
@@ -256,11 +252,7 @@ def create_template_from_project(
     # Copy project files to template directory
     for root, dirs, files in os.walk(project_dir):
         # Apply exclusions
-        dirs[:] = [
-            d
-            for d in dirs
-            if not any(re.match(pattern, d) for pattern in exclude_paths)
-        ]
+        dirs[:] = [d for d in dirs if not any(re.match(pattern, d) for pattern in exclude_paths)]
 
         # Calculate relative path from project directory
         rel_path = Path(root).relative_to(project_dir)
