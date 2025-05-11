@@ -1,0 +1,31 @@
+# Dependencies for {{project_name}}
+
+# Core LangGraph dependencies
+langgraph>=0.0.30
+langchain>=0.1.0
+langchain-openai>=0.0.5
+langchain-chroma==0.2.3
+langchain-community>=0.0.5
+python-dotenv>=0.24.0
+
+# Backend dependencies
+fastapi>=0.100.0
+uvicorn>=0.22.0
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+httpx>=0.24.0
+
+# Memory (based on configured memory type)
+chromadb>=0.4.18  # For vector storage
+faiss-cpu>=1.7.4  # For document vector storage
+
+# Document processing
+unstructured>=0.10.30
+pdf2image>=1.16.3
+pytesseract>=0.3.10
+python-multipart>=0.0.6  # For file uploads
+
+# Utilities
+jinja2>=3.1.2
+pyyaml>=6.0
+rich>=12.0.0

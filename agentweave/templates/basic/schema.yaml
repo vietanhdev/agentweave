@@ -1,0 +1,15 @@
+description: Basic template configuration schema
+required:
+  - project_name
+  - project_description
+  - author
+properties:
+  project_name:
+    type: string
+    description: Name of the project
+  project_description:
+    type: string
+    description: Description of the project
+  author:
+    type: string
+    description: Author of the project

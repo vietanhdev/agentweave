@@ -1,0 +1,80 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentweave"
+version = "0.0.5"
+description = "CLI tool for initializing and managing AI agent projects based on LangGraph"
+readme = "README.md"
+authors = [
+    {name = "AgentWeave Team"}
+]
+license = {text = "MIT"}
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+    "click>=8.1.3",
+    "rich>=12.0.0",
+    "pyyaml>=6.0",
+    "jinja2>=3.1.2",
+    "langgraph>=0.0.30",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.22.0",
+    "typer>=0.9.0",
+    "psutil>=6.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+]
+
+[project.scripts]
+agentweave = "agentweave.cli.main:app"
+
+[tool.setuptools]
+packages = ["agentweave", "agentweave.cli", "agentweave.templates", "agentweave.utils"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+agentweave = ["templates/**/.*", "templates/**/*", "templates/basic/.env.example"]
+
+[tool.setuptools.exclude-package-data]
+agentweave = [
+    "**/.env", "**/.env.*", "!**/templates/basic/.env.example",
+    "**/node_modules/**", "templates/basic/frontend/node_modules/**",
+    "**/.next/**", "templates/basic/frontend/.next/**",
+    # Test files
+    "**/tests/**", "**/test_*.py", "**/*_test.py",
+
+    # Development and CI configuration
+    "**/.git*", "**/.github/**",
+    "**/.travis.yml", "**/.gitlab-ci.yml", "**/.pre-commit-config.yaml",
+    "**/.editorconfig", "**/tox.ini",
+
+    # Documentation
+    "**/docs/**",
+
+    # Build and cache directories
+    "**/__pycache__/**", "**/.pytest_cache/**", "**/.ruff_cache/**",
+    "**/build/**", "**/dist/**", "**/*.egg-info/**",
+
+    # Coverage and test results
+    "**/.coverage", "**/htmlcov/**", "**/coverage.xml", "**/.hypothesis/**",
+
+    # Jupyter notebooks
+    "**/*.ipynb", "**/.ipynb_checkpoints/**",
+
+    # Other unnecessary files
+    "**/*.py[cod]", "**/*.log", "**/*.log.*", "**/*.swp", "**/*.swo",
+    "**/*.db", "**/*.sqlite"
+]

@@ -1,0 +1,74 @@
+include README.md
+include LICENSE
+recursive-include agentweave/templates *
+recursive-include agentweave/templates/.* *
+
+# Include the environment example file
+include agentweave/templates/basic/.env.example
+
+# Exclude environment files
+global-exclude *.env
+global-exclude .env
+global-exclude .env.*
+
+# Exclude node_modules directories
+prune **/node_modules
+prune agentweave/templates/basic/frontend/node_modules
+
+# Exclude Next.js build directory
+prune agentweave/templates/basic/frontend/.next
+prune **/.next
+
+# Exclude test files
+prune **/tests
+global-exclude test_*.py
+global-exclude *_test.py
+
+# Exclude development and CI configuration
+prune .github
+global-exclude .travis.yml
+global-exclude .gitlab-ci.yml
+global-exclude .pre-commit-config.yaml
+global-exclude .flake8
+global-exclude .editorconfig
+global-exclude tox.ini
+
+# Exclude documentation source files (if applicable)
+prune docs
+
+# Exclude build and cache directories
+prune **/__pycache__
+prune **/.pytest_cache
+prune **/.ruff_cache
+prune **/build
+prune **/dist
+prune **/*.egg-info
+
+# Exclude coverage and test results
+global-exclude .coverage
+prune **/htmlcov
+global-exclude coverage.xml
+prune **/.hypothesis
+
+# Exclude Jupyter notebooks and checkpoints
+global-exclude *.ipynb
+prune **/.ipynb_checkpoints
+
+# Exclude other unnecessary files
+global-exclude __pycache__
+global-exclude *.py[cod]
+global-exclude *$py.class
+global-exclude *.so
+global-exclude .DS_Store
+global-exclude *.log
+global-exclude *.log.*
+global-exclude *.swp
+global-exclude *.swo
+global-exclude *.db
+global-exclude *.sqlite
+
+# Exclude git and other VCS files
+global-exclude .git*
+global-exclude .hg*
+global-exclude .bzr*
+global-exclude .svn*

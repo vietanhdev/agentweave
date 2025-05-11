@@ -1,0 +1,26 @@
+# AgentWeave Project Configuration
+
+name: { { project_name } }
+description: { { project_description } }
+version: 0.1.0
+author: { { author } }
+
+# Template used for this project
+template: basic
+
+# Project settings
+settings:
+  use_example_tools: True
+
+# Agent configuration
+agent:
+  type: basic
+  llm_provider: openai
+  model: gpt-3.5-turbo-0125
+  temperature: 0.7
+
+# Components
+components:
+  memory: simple
+  tools: []
+  monitoring: []
